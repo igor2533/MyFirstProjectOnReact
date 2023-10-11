@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import DataProducts from "./data";
 
-import SweetPagination from "sweetpagination";
+import { CartProvider, useCart } from "react-use-cart";
 import {
     createBrowserRouter,
     RouterProvider,
@@ -8,56 +9,74 @@ import {
     Link,
 } from 'react-router-dom';
 function Products()  {
-
-    const itemsvirual = [];
-        
-    const [currentPageData, setCurrentPageData] = useState(itemsvirual);
-    const items = [
-        {id:1, title: 'Утюг', alias: 'ytug', src:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Moench_2339.jpg/1200px-Moench_2339.jpg'},
-        {id:2, title: 'Компьютер',alias: 'pc',src:'https://s1.stc.all.kpcdn.net/russia/wp-content/uploads/2019/01/Altai-.jpg'},
-        {id:3, title: 'Наушники', alias: 'headphones', src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaBaZztXmYDfQ3Dvzn1tuEZ9gOUiV-jn4iw&usqp=CAU'},
-        {id:4, title: 'Наушники2', alias: 'headphones1', src:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Moench_2339.jpg/1200px-Moench_2339.jpg'},
-        {id:5, title: 'Наушники3', alias: 'headphones2',src:'https://s1.stc.all.kpcdn.net/russia/wp-content/uploads/2019/01/Altai-.jpg'},
-        {id:6, title: 'Наушники4', alias: 'headphones3', src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaBaZztXmYDfQ3Dvzn1tuEZ9gOUiV-jn4iw&usqp=CAU'},
-        {id:7, title: 'Наушники5', alias: 'headphones4',src:'https://s1.stc.all.kpcdn.net/russia/wp-content/uploads/2019/01/Altai-.jpg'},
-        {id:8, title: 'Наушники6', alias: 'headphones5', src:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Moench_2339.jpg/1200px-Moench_2339.jpg'},
-        {id:9, title: 'Наушники7', alias: 'headphones6', src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaBaZztXmYDfQ3Dvzn1tuEZ9gOUiV-jn4iw&usqp=CAU'},
-        {id:10, title: 'Наушники8', alias: 'headphones7', src:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Moench_2339.jpg/1200px-Moench_2339.jpg'},
-        {id:11, title: 'Наушники9', alias: 'headphones8', src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoaBaZztXmYDfQ3Dvzn1tuEZ9gOUiV-jn4iw&usqp=CAU'},
-        {id:12, title: 'Наушники10', alias: 'headphones9',src:'https://s1.stc.all.kpcdn.net/russia/wp-content/uploads/2019/01/Altai-.jpg'}
-        
-        ];
-
-
-
+  const { addItem } = useCart();
+ 
+    const items = DataProducts();
+    //const [currentPageData, setCurrentPageData] = useState(items);
 return (
-    <div>
-        <div className="columns-3 ...">
-      { currentPageData.map((product) => (
-        <div className="item"  key={product.id}>
-              <Link to={`/product/${product.alias}`} >  <img className="w-full aspect-video ..." src={product.src} />
-          
-          <h3>Item #{product.title}</h3></Link> 
-           </div>
-      ))}
-</div>
-      <SweetPagination
-        currentPageData={setCurrentPageData}
-        getData={items}
-        navigation={true}
-        dataPerPage={3}
-      />
-    </div>
+      
+          <div>
+              <div className="columns-3 ...">
+            { items.map((product) => (
+              <div className="item"  key={product.id}>
+                <img className="w-full aspect-video ..." src={product.src} />
+                     <Link to={`/product/${product.alias}`} >  To</Link> 
+                
+                <h3>Item #{product.title}</h3>
+                 </div>
+            ))}
+      </div>
+       
+          </div>
+      
+        );
+
+            };
+
+
+
+
+function Cart() {
+  const {
+    isEmpty,
+    totalUniqueItems,
+    currentPageData,
+    updateItemQuantity,
+    removeItem,
+  } = useCart();
+
+  if (isEmpty) return <p>Your cart is empty</p>;
+
+  return (
+    <>
+      <h1>Cart ({totalUniqueItems})</h1>
+
+      <ul>
+        {DataProducts().map((item) => (
+          <li key={item.id}>
+            {item.quantity} x {item.title} &mdash;
+            <button
+              onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
+            >
+              -
+            </button>
+            <button
+              onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
+            >
+              +
+            </button>
+            <button onClick={() => removeItem(item.id)}>&times;</button>
+          </li>
+        ))}
+      </ul>
+    </>
   );
-
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
 
 export default Products;
